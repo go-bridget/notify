@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  notify:
+    image: alpine:latest
+    environment:
+    - PORT=:1234
+    ports:
+    - 1234:1234
+    volumes:
+    - ./build:/build
+    working_dir: /build
+    entrypoint: [ "./notify-linux-amd64" ]
+
+  redis:
+    image: eqalpha/keydb:x86_64_v5.3.0

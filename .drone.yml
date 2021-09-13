@@ -1,0 +1,28 @@
+workspace:
+  base: /microservice
+
+kind: pipeline
+name: build
+
+steps:
+- name: codegen
+  image: internal/notify:build
+  commands:
+  - make rpc
+
+- name: lint
+  image: golangci/golangci-lint:v1.38.0
+  pull: always
+  commands:
+  - golangci-lint run --enable-all ./...
+
+- name: lint-pkg
+  image: internal/notify:build
+  commands:
+  - faillint -paths $(cat .faillint | xargs echo | sed 's/ /,/g') ./...
+
+- name: build
+  image: internal/notify:build
+  commands:
+  - make build
+  - make tidy

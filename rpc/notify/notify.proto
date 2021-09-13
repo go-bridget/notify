@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package notify;
+
+option go_package = "github.com/go-bridget/notify/rpc/notify";
+
+service NotifyService {
+	// Auth request for websocket
+	rpc Auth(AuthRequest) returns (AuthResponse);
+}
+
+message AuthRequest {
+	string authorization = 1;
+}
+message AuthResponse {
+	string userID = 1;
+}

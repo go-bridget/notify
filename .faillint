@@ -1,0 +1,4 @@
+log=github.com/apex/log
+errors=github.com/pkg/errors
+fmt.{Print,Printf,Println}
+net/http.Get
