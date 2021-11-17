@@ -14,8 +14,10 @@ import (
 )
 
 func NewNotifyServiceGateway(svc NotifyService, hooks *twirp.ServerHooks) chi.Router {
+	fs := http.FileServer(http.Dir("public_html"))
 	mux := chi.NewRouter()
 	mux.Use(middleware.Logger)
+	mux.Handle("/*", fs)
 	mux.Mount("/twirp", NewNotifyServiceServer(svc, hooks))
 	mux.HandleFunc("/notify/ws", func(w http.ResponseWriter, req *http.Request) {
 		// produce original response writer so we can hijack connection
