@@ -58,6 +58,7 @@ func NewNotifyServiceGateway(svc NotifyService, hooks *twirp.ServerHooks) chi.Ro
 		if err != nil {
 			log.WithError(err).Info("Authentication error")
 			_ = handler.Send(internal.NewError(err))
+			handler.Close()
 		} else {
 			_ = handler.Send(struct {
 				Kind   string `json:"kind"`
