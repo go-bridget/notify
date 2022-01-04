@@ -16,6 +16,7 @@ import (
 func WrapAll(h http.Handler) http.Handler {
 	h = WrapWithIP(h)
 	h = WrapWithAPM(h)
+	h = WrapWithCookies(h)
 	return h
 }
 
