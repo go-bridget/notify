@@ -5,7 +5,8 @@ import (
 )
 
 type Options struct {
-	JwtSecret string
+	JwtSecret     string
+	SessionCookie string
 }
 
 func NewOptions() *Options {
@@ -28,5 +29,6 @@ func (o *Options) BindWithPrefix(prefix string) *Options {
 		return s
 	}
 	cli.StringVar(&o.JwtSecret, p("jwt-secret"), "default", "JWT token signature secret")
+	cli.StringVar(&o.SessionCookie, p("session-cookie"), "", "Cookie name for JWT token")
 	return o
 }
