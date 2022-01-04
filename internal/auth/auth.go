@@ -13,7 +13,7 @@ type (
 	}
 
 	UserClaims struct {
-		UserID string `json:"user_id"`
+		UserID ID `json:"user_id"`
 		jwt.StandardClaims
 	}
 )
@@ -30,7 +30,7 @@ func (u *UserAuthenticator) UserID(token string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return claims.UserID, nil
+	return string(claims.UserID), nil
 }
 
 // Claims returns the complete JWT claims object
