@@ -18,6 +18,9 @@ user ID is then mapped to individual redis keys:
 Broadcasting to the Redis channels can be done from your own applications
 directly. Twirp RPC API endpoints are also provided for convenience.
 
+Additionaly a set of topics can be provided and the session will be
+subscribed to `notify_topic:%s` channels.
+
 ## Building
 
 Notify uses Docker and Drone CI. In order to build a notify binary for
