@@ -17,6 +17,7 @@ type Handler struct {
 	channel *pubsub.PubSub
 
 	userID   string
+	topics   []string
 	outgoing chan []byte
 }
 
@@ -25,11 +26,12 @@ type StatePayload struct {
 	State map[string]string `json:"state"`
 }
 
-func NewHandler(ctx context.Context, id string) *Handler {
+func NewHandler(ctx context.Context, id string, topics []string) *Handler {
 	return &Handler{
 		Context:  ctx,
 		channel:  pubsub.New(),
 		userID:   id,
+		topics:   topics,
 		outgoing: make(chan []byte, 512),
 	}
 }
@@ -47,7 +49,11 @@ func (h *Handler) Connect() error {
 	onMessage := func(channel string, msg []byte) error {
 		return h.SendRaw(msg)
 	}
-	return h.channel.Subscribe(h, fmt.Sprintf("notify:%s", h.userID), onStart, onMessage)
+	topics := h.topics
+	for i := range topics {
+		topics[i] = "notify_topic:" + topics[i]
+	}
+	return h.channel.Subscribe(h, append(topics, fmt.Sprintf("notify:%s", h.userID)), onStart, onMessage)
 }
 
 func (h *Handler) Close() {

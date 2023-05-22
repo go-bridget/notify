@@ -59,7 +59,7 @@ func (ps *PubSub) HGetAll(ctx context.Context, key string) (map[string]string, e
 	return redis.StringMap(conn.Do("HGETALL", key))
 }
 
-func (ps *PubSub) Subscribe(ctx context.Context, channel string, onStart func() error, onMessage func(channel string, payload []byte) error) error {
+func (ps *PubSub) Subscribe(ctx context.Context, channels []string, onStart func() error, onMessage func(channel string, payload []byte) error) error {
 	// main redis connection
 	conn, err := ps.dial()
 	if err != nil {
@@ -69,7 +69,7 @@ func (ps *PubSub) Subscribe(ctx context.Context, channel string, onStart func() 
 
 	// pubsub object
 	psc := redis.PubSubConn{Conn: conn}
-	if err := psc.Subscribe(redis.Args{}.Add(channel)...); err != nil {
+	if err := psc.Subscribe(redis.Args{}.AddFlat(channels)...); err != nil {
 		return err
 	}
 

@@ -3,6 +3,7 @@ package notify
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/apex/log"
 	"github.com/go-chi/chi"
@@ -29,7 +30,8 @@ func NewNotifyServiceGateway(svc NotifyService, hooks *twirp.ServerHooks) chi.Ro
 			ctx = req.Context()
 
 			// auth result
-			res *AuthResponse
+			res    *AuthResponse
+			topics []string
 		)
 
 		start := func() error {
@@ -42,6 +44,7 @@ func NewNotifyServiceGateway(svc NotifyService, hooks *twirp.ServerHooks) chi.Ro
 			// authenticate session
 			payload := new(AuthRequest)
 			payload.Authorization = values.Get("authorization")
+			topics = strings.Fields(strings.ReplaceAll(values.Get("topic"), ",", " "))
 
 			// authenticate
 			res, err = svc.Auth(ctx, payload)
@@ -54,7 +57,7 @@ func NewNotifyServiceGateway(svc NotifyService, hooks *twirp.ServerHooks) chi.Ro
 		err := start()
 
 		// we now have res.UserID int64
-		handler := NewHandler(ctx, res.UserID)
+		handler := NewHandler(ctx, res.UserID, topics)
 		if err != nil {
 			log.WithError(err).Info("Authentication error")
 			_ = handler.Send(internal.NewError(err))
